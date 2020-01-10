@@ -10,9 +10,10 @@ import Control.Monad.Reader
 import HspecSample.MonadAsk
 import HspecSample.MonadPrint
 
-class (MonadAsk s m, MonadPrint m) => MonadApp s m where
-    askPrint :: Show a => (s -> a) -> m ()
-    askPrint = print' <=< asks'
+class (MonadAsk s m a, MonadPrint m a) => MonadApp s m a where
+    askPrint :: (s -> a) -> m ()
+    askPrint f =
+        mapM_ print' =<< asks' f
 
 newtype App s m a = App
     { runApp :: ReaderT s m a
@@ -25,4 +26,4 @@ newtype App s m a = App
     , MonadReader s
     )
 
-instance MonadApp s (App s IO)
+instance Show a => MonadApp s (App s IO) a
