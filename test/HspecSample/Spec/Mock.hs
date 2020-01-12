@@ -7,7 +7,6 @@
 
 module HspecSample.Spec.Mock where
 
-import Control.Monad.Reader
 import Control.Monad.State
 import HspecSample.MonadApp
 import HspecSample.MonadAsk
