@@ -1,8 +1,8 @@
 module HspecSample.App where
 
-import Control.Monad.Reader
 import HspecSample.MonadApp
+import HspecSample.MonadAsk
+import HspecSample.MonadPrint
 
-app :: IO ()
-app = (`runReaderT` ["Hello, ", "world!"]) . runApp $
-    askPrint concat
+app :: MonadApp m => m ()
+app = mapM_ print' =<< asks' (concat :: [String] -> String)

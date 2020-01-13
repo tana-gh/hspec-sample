@@ -1,13 +1,11 @@
-{-# LANGUAGE DeriveFunctor              #-}
-{-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE RankNTypes                 #-}
 
 module HspecSample.Spec.Mock where
 
 import Control.Monad.State
+import HspecSample.Config
 import HspecSample.MonadApp
 import HspecSample.MonadAsk
 import HspecSample.MonadPrint
@@ -30,17 +28,20 @@ data MockState = MockState
 initialMockState :: MockState
 initialMockState = MockState [] []
 
+config :: Config
+config = ["config1", "config2"]
+
 asksCalled :: String
 asksCalled = "asks called"
 
-instance {-# OVERLAPS #-} Monad m => MonadAsk MockState (Mock m) String where
-    asks' _ = do
+instance Monad m => MonadAsk Config (Mock m) where
+    asks' f = do
         modify $ \s -> s { asksState = asksCalled : asksState s }
-        return $ Just asksCalled
+        return . Just $ f config
 
-instance {-# OVERLAPS #-} Monad m => MonadPrint (Mock m) String where
+instance Monad m => MonadPrint (Mock m) where
     print' a = do
-        modify $ \s -> s { printState = a : printState s }
+        modify $ \s -> s { printState = show a : printState s }
         return ()
 
-instance Monad m => MonadApp MockState (Mock m) String
+instance Monad m => MonadApp (Mock m)
