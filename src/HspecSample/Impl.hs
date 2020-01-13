@@ -14,7 +14,7 @@ import HspecSample.MonadAsk
 import HspecSample.MonadPrint
 
 newtype App m a = App
-    { runApp :: ReaderT [String] m a
+    { runApp :: ReaderT Config m a
     } deriving
     ( Functor
     , Applicative
