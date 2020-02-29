@@ -3,6 +3,7 @@
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
+{-# LANGUAGE StandaloneDeriving         #-}
 
 module HspecSample.Impl where
 
@@ -20,9 +21,9 @@ newtype App m a = App
     , Applicative
     , Monad
     , MonadTrans
-    , MonadIO
     , MonadReader Config
     )
+deriving instance MonadIO (App IO)
 
 instance MonadAsk Config (App IO) where
     asks' f = Just <$> asks f
