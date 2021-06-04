@@ -9,6 +9,6 @@ spec :: Spec
 spec =
     describe "askPrint" $
         it "asks and print are called correctly" $ do
-            st <- (`execStateT` initialMockState ) . runMock $ app
+            st <- (`execStateT` initialMockState ) $ runMock app
             asksState  st `shouldBe` [asksCalled]
             printState st `shouldBe` [show $ concat config]

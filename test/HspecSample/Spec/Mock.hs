@@ -10,14 +10,14 @@ import HspecSample.MonadApp
 import HspecSample.MonadAsk
 import HspecSample.MonadPrint
 
-newtype Mock m a = Mock
-    { runMock :: StateT MockState m a
+newtype Mock s m a = Mock
+    { runMock :: StateT s m a
     } deriving
     ( Functor
     , Applicative
     , Monad
     , MonadTrans
-    , MonadState MockState
+    , MonadState s
     )
 
 data MockState = MockState
@@ -34,14 +34,12 @@ config = ["config1", "config2"]
 asksCalled :: String
 asksCalled = "asks called"
 
-instance Monad m => MonadAsk Config (Mock m) where
+instance Monad m => MonadAsk Config (Mock MockState m) where
     asks' f = do
         modify $ \s -> s { asksState = asksCalled : asksState s }
-        return . Just $ f config
+        return $ f config
 
-instance Monad m => MonadPrint (Mock m) where
-    print' a = do
-        modify $ \s -> s { printState = show a : printState s }
-        return ()
+instance Monad m => MonadPrint (Mock MockState m) where
+    print' a = modify $ \s -> s { printState = show a : printState s }
 
-instance Monad m => MonadApp (Mock m)
+instance Monad m => MonadApp Config (Mock MockState m)

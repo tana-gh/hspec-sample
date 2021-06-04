@@ -1,9 +1,6 @@
-{-# OPTIONS_GHC -fno-warn-orphans #-}
-
 {-# LANGUAGE FlexibleInstances          #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
 {-# LANGUAGE MultiParamTypeClasses      #-}
-{-# LANGUAGE StandaloneDeriving         #-}
 
 module HspecSample.Impl where
 
@@ -14,21 +11,21 @@ import HspecSample.MonadApp
 import HspecSample.MonadAsk
 import HspecSample.MonadPrint
 
-newtype App m a = App
-    { runApp :: ReaderT Config m a
+newtype App s m a = App
+    { runApp :: ReaderT s m a
     } deriving
     ( Functor
     , Applicative
     , Monad
     , MonadTrans
-    , MonadReader Config
+    , MonadReader s
+    , MonadIO
     )
-deriving instance MonadIO (App IO)
 
-instance MonadAsk Config (App IO) where
-    asks' f = Just <$> asks f
+instance Monad m => MonadAsk s (App s m) where
+    asks' = asks
 
-instance MonadPrint (App IO) where
+instance MonadIO m => MonadPrint (App s m) where
     print' = liftIO . print
 
-instance MonadApp (App IO)
+instance MonadIO m => MonadApp s (App s m)

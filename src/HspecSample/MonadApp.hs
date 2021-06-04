@@ -1,9 +1,8 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module HspecSample.MonadApp where
 
-import HspecSample.Config
 import HspecSample.MonadAsk
 import HspecSample.MonadPrint
 
-class (MonadAsk Config m, MonadPrint m) => MonadApp m
+class (MonadAsk s m, MonadPrint m) => MonadApp s m
